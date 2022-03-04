@@ -1,0 +1,11 @@
+codes for cell state:
+
+0 - empty_cell
+1 - cell contains player 1's piece
+2 - cell contains player 2's piece
+3 - cell contains player 1's piece and is selected
+4 - cell contains player 2's piece and is selected
+5 - cell contains player 1's piece and is part of a hit!
+6 - cell contains player 2's piece and is part of a hit!
+
+note: A hit happens when 3 pieces are aligned in either the horizontal or vertical axis
