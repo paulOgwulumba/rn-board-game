@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     boardPiece: {
         width: '100%',
         height: '100%',
-        borderRadius: '100%',
+        borderRadius: 100,
         backgroundColor: '#fff',
     }
 });
