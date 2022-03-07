@@ -6,11 +6,11 @@ import { getNumberOfPiecesAhead, getNumberOfPiecesBehind } from ".";
  * @param currentGameState The current game state.
  * @returns True if horizontal alignment is observed, false if it is not.
  */
- const isCellHorizontallyAligned = (currentGameState: gamePlayState): boolean => {
+ const isCellHorizontallyAligned = (currentGameState: gamePlayState, numberOfMatches = 3): boolean => {
     const numberOfPiecesAhead = getNumberOfPiecesAhead(currentGameState);
     const numberOfPiecesBehind = getNumberOfPiecesBehind(currentGameState);
 
-    return numberOfPiecesAhead + numberOfPiecesBehind > 1? true : false;
+    return numberOfPiecesAhead + numberOfPiecesBehind > (numberOfMatches - 2)? true : false;
 };
 
 export { isCellHorizontallyAligned };

@@ -6,6 +6,7 @@ import {
     isCellEmpty,
     isCellHorizontallyAligned,
     isCellVerticallyAligned,
+    isMoreThanACellAwayFromSelectedPiece,
 } from './';
 
 interface gamePlayCheckReturnValue {
@@ -107,4 +108,54 @@ const isValidCellToAddPieceTo = (currentGameState: gamePlayState): gamePlayCheck
     }
 };
 
-export { isValidPieceToSelect, isValidCellToAddPieceTo};
+/**
+ * @description This method checks if the cell that a player wants to move a piece on the board to
+ * is valid. To pass validity check, the cell must be empty and it must not complete a 4-piece match or higher in
+ * either the horizontal or vertical axis.
+ * @param currentGameState 
+ * @returns 
+ */
+const isValidCellToMovePieceTo = (currentGameState: gamePlayState):gamePlayCheckReturnValue => {
+    const {boardState, cellClicked, cellOfSelectedPiece } = currentGameState;
+    const stateOfCellClicked = boardState[cellClicked.Y][cellClicked.X];
+
+    // If it is not an empty cell, return 'false'.
+    if (!isCellEmpty(stateOfCellClicked)){
+        return {
+            isValid: false,
+            message: 'You cannot move a piece to this cell because it is already occupied.'
+        };
+    }
+
+    // if cell selected is not a cell away from the previously selected piece, return 'false'.
+    if (isMoreThanACellAwayFromSelectedPiece(cellClicked, cellOfSelectedPiece)){
+        return {
+            isValid: false,
+            message: 'You cannot place your piece here because it is not next to your piece\'s original position.',
+        };
+    }
+
+    // if adding piece to cell will complete a horizontal match of more than 3 pieces, return 'false'.
+    if (isCellHorizontallyAligned(currentGameState, 4)) {
+        return {
+            isValid: false,
+            message: 'You cannot place your piece here because it completes a horizontal match of more than 3 pieces.'
+        };
+    }
+
+    // if adding piece to cell will complete a vertical match of more than 3, return 'false'.
+    if (isCellVerticallyAligned(currentGameState)) {
+        return {
+            isValid: false,
+            message: 'You cannot place your piece here because it completes a vertical match of more than 3 pieces.'
+        }
+    }
+
+
+    return {
+        isValid: true,
+        message: 'Validity check passed.',
+    }
+}
+
+export { isValidPieceToSelect, isValidCellToAddPieceTo, isValidCellToMovePieceTo};

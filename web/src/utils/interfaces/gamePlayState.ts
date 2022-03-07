@@ -6,6 +6,7 @@ interface gamePlayState {
     currentPlayer: number,
     cellClicked: cellPosition,
     allPiecesAddedToBoard: boolean,
+    cellOfSelectedPiece: cellPosition,
 };
 
 export type { gamePlayState };

@@ -8,4 +8,5 @@ export * from './getNumberOfPiecesBelow';
 export * from './isCellEmpty';
 export * from './isCellHorizontallyAligned';
 export * from './isCellVerticallyAligned'; 
+export * from './isMoreThanACellAwayFromSelectedPiece';
 export * from './unpackBoardState';

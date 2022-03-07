@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Board } from './components';
-import { unpackBoardState, stringifyBoardState, isValidCellToAddPieceTo } from './utils';
+import { 
+    unpackBoardState, 
+    stringifyBoardState, 
+    isValidCellToAddPieceTo, 
+    isValidCellToMovePieceTo,
+    isValidPieceToSelect, 
+} from './utils';
 import { cellPosition, gamePlayState } from './utils/interfaces';
 import { player, cellState } from './utils/constants';
 
 const initialBoardState = `00000_00000_00000_00000_00000`;
 
 function App() {
+  const numberOfPieces = 6;
   const [boardState, setBoardState] = useState(initialBoardState);
   const [playerTurn, setPlayerTurn] = useState(player.FIRST_PLAYER);
   const [currentPlayer, setCurrentPlayer] = useState(player.FIRST_PLAYER);
   const [allPiecesAddedToBoard, setAllPiecesAddedToBoard] = useState(false);
-  const [playerOnePiecesInHand, setPlayerOnePiecesInHand] = useState(8);
-  const [playerOnePiecesLeft, setPlayerOnePiecesLeft] = useState(8);
-  const [playerTwoPiecesInHand, setPlayerTwoPiecesInHand] = useState(8);
-  const [playerTwoPiecesLeft, setPlayerTwoPiecesLeft] = useState(8)
-
+  const [playerOnePiecesInHand, setPlayerOnePiecesInHand] = useState(numberOfPieces);
+  const [playerOnePiecesLeft, setPlayerOnePiecesLeft] = useState(numberOfPieces);
+  const [playerTwoPiecesInHand, setPlayerTwoPiecesInHand] = useState(numberOfPieces);
+  const [playerTwoPiecesLeft, setPlayerTwoPiecesLeft] = useState(numberOfPieces);
+  const [isPlayerToPlayAgain, setIsPlayerToplayAgain] = useState(false);
+  const [cellOfSelectedPiece, setCellOfselectedPiece] = useState({ X:0, Y:0 });
   
   const handleClick = (position: cellPosition) => {
       const unpackedBoardState = unpackBoardState(boardState);
@@ -25,7 +33,8 @@ function App() {
           boardState: unpackedBoardState,
           currentPlayer,
           cellClicked: position,
-          allPiecesAddedToBoard
+          allPiecesAddedToBoard,
+          cellOfSelectedPiece,
       };
 
       if (!allPiecesAddedToBoard) {
@@ -52,15 +61,69 @@ function App() {
                 setPlayerTwoPiecesInHand(playerTwoPiecesInHand - 1)
               
               // toggle player's turn
-              setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
-
-              
+              setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);  
           } else {
               alert(cellAdditionValidityStatus.message);
           }
       }
       else {
-          console.log('All pieces have been added to the board.')
+          // check if current player selected a piece before
+          if (isPlayerToPlayAgain) {
+              // If previously selected piece is clicked on again, deselect it.
+              if (JSON.stringify(cellOfSelectedPiece) === JSON.stringify(position)) {   
+                  // change the state of the selected cell from selected to normal.
+                  unpackedBoardState[position.Y][position.X] = 
+                  playerTurn === player.FIRST_PLAYER? 
+                      cellState.CELL_CONTAINING_PIECE_PLAYER_1
+                      : 
+                      cellState.CELL_CONTAINING_PIECE_PLAYER_2
+                  setBoardState(stringifyBoardState(unpackedBoardState));
+                  // signify that double play has ended
+                  setIsPlayerToplayAgain(false);
+                  return;
+              }
+
+              const cellMovingValidityStatus = isValidCellToMovePieceTo(gamePlayState);
+              if (cellMovingValidityStatus.isValid) {
+                  // add piece to the selected cell
+                  unpackedBoardState[position.Y][position.X] = 
+                  playerTurn === player.FIRST_PLAYER? 
+                      cellState.CELL_CONTAINING_PIECE_PLAYER_1
+                      : 
+                      cellState.CELL_CONTAINING_PIECE_PLAYER_2;
+                  
+                  // remove piece from the previous cell
+                  unpackedBoardState[cellOfSelectedPiece.Y][cellOfSelectedPiece.X] = cellState.CELL_EMPTY;
+                  setBoardState(stringifyBoardState(unpackedBoardState));
+
+                  // toggle player's turn
+                  setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER); 
+                  setCurrentPlayer(currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
+                  // signify that double play has ended
+                  setIsPlayerToplayAgain(false);
+              } 
+              else {
+                  alert(cellMovingValidityStatus.message);
+              }
+          }
+          else {
+              const pieceSelectionValidationStatus = isValidPieceToSelect(gamePlayState);
+              if (pieceSelectionValidationStatus.isValid) {
+                  // change the state of the selected cell to selected
+                  unpackedBoardState[position.Y][position.X] = 
+                  playerTurn === player.FIRST_PLAYER? 
+                      cellState.CELL_SELECTED_PLAYER_1
+                      : 
+                      cellState.CELL_SELECTED_PLAYER_2;
+                  setBoardState(stringifyBoardState(unpackedBoardState));
+                  // signify that double play is activated
+                  setIsPlayerToplayAgain(true);
+                  setCellOfselectedPiece(position);
+              }
+              else {
+                  alert(pieceSelectionValidationStatus.message);
+              }
+          }
       }
   }
 
