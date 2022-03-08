@@ -7,6 +7,7 @@ export * from './getNumberOfPiecesBehind';
 export * from './getNumberOfPiecesBelow';
 export * from './isCellEmpty';
 export * from './isCellHorizontallyAligned';
-export * from './isCellVerticallyAligned'; 
+export * from './isCellVerticallyAligned';
+export * from './isDiagonalCell'; 
 export * from './isMoreThanACellAwayFromSelectedPiece';
 export * from './unpackBoardState';

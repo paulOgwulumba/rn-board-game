@@ -6,6 +6,7 @@ import {
     isCellEmpty,
     isCellHorizontallyAligned,
     isCellVerticallyAligned,
+    isDiagonalCell,
     isMoreThanACellAwayFromSelectedPiece,
 } from './';
 
@@ -132,6 +133,14 @@ const isValidCellToMovePieceTo = (currentGameState: gamePlayState):gamePlayCheck
         return {
             isValid: false,
             message: 'You cannot place your piece here because it is not next to your piece\'s original position.',
+        };
+    }
+
+    // if cell selected is diagonally placed with respect to previously selected piece, return false.
+    if (isDiagonalCell(currentGameState)) {
+        return {
+            isValid: false,
+            message: 'You can only move your piece in the North, South, West or East direction. No diagonal movement allowed',
         };
     }
 
