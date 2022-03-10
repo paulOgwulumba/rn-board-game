@@ -23,10 +23,11 @@ import { player, cellState } from './constants';
 };
 
 const getNumberOfPiecesAbovePlayer1 = (boardState: Array<Array<number>>, cellPosition: cellPosition): number => {
+    console.log('Getting number of pieces above for player one.')
     let numberOfPieces = 0;
     if (cellPosition.Y < (boardState.length - 1)) {
         const stateOfCellAhead = boardState[cellPosition.Y + 1][cellPosition.X];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_1) {
+        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_1 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_1) {
             const cellPositionAhead: cellPosition = {
                 X: cellPosition.X,
                 Y: cellPosition.Y + 1,
@@ -43,7 +44,7 @@ const getNumberOfPiecesAbovePlayer2 = (boardState: Array<Array<number>>, cellPos
     let numberOfPieces = 0;
     if (cellPosition.Y < (boardState.length - 1)) {
         const stateOfCellAhead = boardState[cellPosition.Y + 1][cellPosition.X];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_2) {
+        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_2 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_2) {
             const cellPositionAhead: cellPosition = {
                 X: cellPosition.X,
                 Y: cellPosition.Y + 1,

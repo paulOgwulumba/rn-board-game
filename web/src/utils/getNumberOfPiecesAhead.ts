@@ -26,7 +26,7 @@ const getNumberOfPiecesAheadPlayer1 = (boardState: Array<Array<number>>, cellPos
     let numberOfPieces = 0;
     if (cellPosition.X < (boardState.length - 1)) {
         const stateOfCellAhead = boardState[cellPosition.Y][cellPosition.X + 1];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_1) {
+        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_1 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_1) {
             const cellPositionAhead: cellPosition = {
                 X: cellPosition.X + 1,
                 Y: cellPosition.Y,
@@ -43,7 +43,7 @@ const getNumberOfPiecesAheadPlayer2 = (boardState: Array<Array<number>>, cellPos
     let numberOfPieces = 0;
     if (cellPosition.X < (boardState.length - 1)) {
         const stateOfCellAhead = boardState[cellPosition.Y][cellPosition.X + 1];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_2) {
+        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_2 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_2) {
             const cellPositionAhead: cellPosition = {
                 X: cellPosition.X + 1,
                 Y: cellPosition.Y,

@@ -6,7 +6,8 @@ import {
     stringifyBoardState, 
     isValidCellToAddPieceTo, 
     isValidCellToMovePieceTo,
-    isValidPieceToSelect, 
+    isValidPieceToSelect,
+    processMatch,
 } from './utils';
 import { cellPosition, gamePlayState } from './utils/interfaces';
 import { player, cellState } from './utils/constants';
@@ -24,6 +25,8 @@ function App() {
   const [playerTwoPiecesInHand, setPlayerTwoPiecesInHand] = useState(numberOfPieces);
   const [playerTwoPiecesLeft, setPlayerTwoPiecesLeft] = useState(numberOfPieces);
   const [isPlayerToPlayAgain, setIsPlayerToplayAgain] = useState(false);
+  const [isPlayerToAttackOpponentPieces, setIsPlayerToAttackOpponentPieces] = useState(false);
+  const [numberOfAttacksLeft, setNumberOfAttacksLeft] = useState(0);
   const [cellOfSelectedPiece, setCellOfselectedPiece] = useState({ X:0, Y:0 });
   
   const handleClick = (position: cellPosition) => {
@@ -84,6 +87,7 @@ function App() {
               }
 
               const cellMovingValidityStatus = isValidCellToMovePieceTo(gamePlayState);
+
               if (cellMovingValidityStatus.isValid) {
                   // add piece to the selected cell
                   unpackedBoardState[position.Y][position.X] = 
@@ -94,13 +98,34 @@ function App() {
                   
                   // remove piece from the previous cell
                   unpackedBoardState[cellOfSelectedPiece.Y][cellOfSelectedPiece.X] = cellState.CELL_EMPTY;
-                  setBoardState(stringifyBoardState(unpackedBoardState));
+                  
 
-                  // toggle player's turn
-                  setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER); 
-                  setCurrentPlayer(currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
-                  // signify that double play has ended
-                  setIsPlayerToplayAgain(false);
+                  // check if there is a match
+                  const matchHandling = processMatch(gamePlayState);
+                  if (matchHandling.isAMatch) {
+                        console.log(matchHandling);
+                        matchHandling.cellPositionsWithAMatch.forEach((cellPositionWithAMatch) => {
+                            unpackedBoardState[cellPositionWithAMatch.Y][cellPositionWithAMatch.X] = 
+                                playerTurn === player.FIRST_PLAYER? 
+                                    cellState.CELL_MATCHED_PLAYER_1 
+                                    :
+                                    cellState.CELL_MATCHED_PLAYER_2
+                        });
+
+                        // Signify that player can attack opponent's pieces.
+                        setNumberOfAttacksLeft(matchHandling.cellPositionsWithAMatch.length> 2? 2 : 1);
+                        setIsPlayerToAttackOpponentPieces(true);
+                        setIsPlayerToplayAgain(false);
+                  } 
+                  else {
+                        // toggle player's turn
+                        setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER); 
+                        setCurrentPlayer(currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
+                        // signify that double play has ended
+                        setIsPlayerToplayAgain(false);
+                  }  
+
+                  setBoardState(stringifyBoardState(unpackedBoardState));
               } 
               else {
                   alert(cellMovingValidityStatus.message);

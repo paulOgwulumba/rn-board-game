@@ -9,6 +9,7 @@ import { getNumberOfPiecesAbove, getNumberOfPiecesBelow } from ".";
  const isCellVerticallyAligned = (currentGameState: gamePlayState, numberOfMatches = 3): boolean => {
     const numberOfPiecesAhead = getNumberOfPiecesAbove(currentGameState);
     const numberOfPiecesBehind = getNumberOfPiecesBelow(currentGameState);
+    
     return numberOfPiecesAhead + numberOfPiecesBehind > (numberOfMatches - 2)? true : false;
 };
 

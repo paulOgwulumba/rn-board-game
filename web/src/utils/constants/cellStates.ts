@@ -6,6 +6,8 @@ enum cellState {
     CELL_SELECTED_PLAYER_2 = 4,
     CELL_MATCHED_PLAYER_1 = 5,
     CELL_MATCHED_PLAYER_2 = 6,
+    CELL_MATCHED_BEFORE_PLAYER_1 = 7,
+    CELL_MATCHED_BEFORE_PLAYER_2 = 8,
 };
 
 export { cellState }

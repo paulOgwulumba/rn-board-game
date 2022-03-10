@@ -153,7 +153,7 @@ const isValidCellToMovePieceTo = (currentGameState: gamePlayState):gamePlayCheck
     }
 
     // if adding piece to cell will complete a vertical match of more than 3, return 'false'.
-    if (isCellVerticallyAligned(currentGameState)) {
+    if (isCellVerticallyAligned(currentGameState, 4)) {
         return {
             isValid: false,
             message: 'You cannot place your piece here because it completes a vertical match of more than 3 pieces.'

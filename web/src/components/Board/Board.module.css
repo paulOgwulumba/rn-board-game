@@ -41,6 +41,10 @@
     background-color: black;
 }
 
+.boardCellHitBefore {
+    background-color: rgb(129, 126, 126);
+}
+
 .boardCellSelected {
     background-color: whitesmoke;
 }

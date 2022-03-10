@@ -10,4 +10,5 @@ export * from './isCellHorizontallyAligned';
 export * from './isCellVerticallyAligned';
 export * from './isDiagonalCell'; 
 export * from './isMoreThanACellAwayFromSelectedPiece';
+export * from './processMatch';
 export * from './unpackBoardState';
