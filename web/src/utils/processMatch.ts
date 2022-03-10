@@ -18,14 +18,14 @@ const processMatch = (gameState: gamePlayState) => {
     
     // if there is horizontal match, compile an array of the cell positions that match
     if (horizontalMatch) {
-        for (let i = 1; i < numberOfPiecesAhead; i++) {
+        for (let i = 1; i < (numberOfPiecesAhead + 1); i++) {
             cellPositionsWithAMatch.push({ 
                 X: cellClicked.X + i ,
                 Y: cellClicked.Y
             });
         };
     
-        for (let i = 1; i < numberOfPiecesBehind; i++) {
+        for (let i = 1; i < (numberOfPiecesBehind + 1); i++) {
             cellPositionsWithAMatch.push({ 
                 X: cellClicked.X - i ,
                 Y: cellClicked.Y
@@ -34,19 +34,17 @@ const processMatch = (gameState: gamePlayState) => {
     }
 
     if (verticalMatch) {
-        console.log(`number of pieces above: ${numberOfPiecesAbove}`);
-        console.log(`Number of pieces below: ${numberOfPiecesBelow}`);
-        for (let i = 1; i < numberOfPiecesAbove; i++) {
+        for (let i = 1; i < (numberOfPiecesAbove + 1); i++) {
             cellPositionsWithAMatch.push({ 
                 X: cellClicked.X,
-                Y: cellClicked.Y + 1
+                Y: cellClicked.Y - i
             });
         };
     
-        for (let i = 1; i < numberOfPiecesBelow; i++) {
+        for (let i = 1; i < (numberOfPiecesBelow + 1); i++) {
             cellPositionsWithAMatch.push({ 
                 X: cellClicked.X,
-                Y: cellClicked.Y - 1
+                Y: cellClicked.Y + i
             });
         };
     }

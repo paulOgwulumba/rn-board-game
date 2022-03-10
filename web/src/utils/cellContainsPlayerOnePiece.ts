@@ -10,6 +10,7 @@ import { cellState } from "./constants";
     if (stateOfCell === cellState.CELL_CONTAINING_PIECE_PLAYER_1) return true;
     if (stateOfCell === cellState.CELL_MATCHED_PLAYER_1) return true;
     if (stateOfCell === cellState.CELL_SELECTED_PLAYER_1) return true;
+    if (stateOfCell === cellState.CELL_MATCHED_BEFORE_PLAYER_1) return true;
   
     return false;
 }

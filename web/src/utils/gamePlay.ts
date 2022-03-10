@@ -160,11 +160,55 @@ const isValidCellToMovePieceTo = (currentGameState: gamePlayState):gamePlayCheck
         }
     }
 
+    return {
+        isValid: true,
+        message: 'Validity check passed.',
+    };
+};
+
+/**
+ * @description This method checks if a piece attacked by a player is a valid one to attack.
+ * A player cannot select a cell containing either their piece or no piece at all. A player can only attack the opponent's piece.
+ * @param currentGameState Object containing the current game state.
+ * @returns {Boolean} True if the cell can be attacked and false if it cannot.
+ */
+const isValidPieceToAttack = (currentGameState: gamePlayState): gamePlayCheckReturnValue => {
+    const { currentPlayer, boardState, playerTurn, cellClicked } = currentGameState;
+    const stateOfCellClicked = boardState[cellClicked.Y][cellClicked.X];
+
+    // If it is an empty cell, return 'false'.
+    if (isCellEmpty(stateOfCellClicked)){
+        return {
+            isValid: false,
+            message: 'Please select your opponent\'s piece, there is no piece on this cell.'
+        }
+    }
+
+    switch (currentGameState.currentPlayer) {
+        case player.FIRST_PLAYER: {
+            if (cellContainsPlayerOnePiece(stateOfCellClicked)) {
+                return {
+                    isValid: false,
+                    message: "You cannot select your opponent's piece."
+                };
+            }
+            break;
+        }
+        case player.SECOND_PLAYER: {
+            if (cellContainsPlayerTwoPiece(stateOfCellClicked))  {
+                return {
+                    isValid: false,
+                    message: "You cannot select your piece. Please select your opponent's piece"
+                }
+            }
+            break;
+        }
+    }
 
     return {
         isValid: true,
         message: 'Validity check passed.',
-    }
+    };
 }
 
-export { isValidPieceToSelect, isValidCellToAddPieceTo, isValidCellToMovePieceTo};
+export { isValidPieceToSelect, isValidCellToAddPieceTo, isValidCellToMovePieceTo, isValidPieceToAttack };

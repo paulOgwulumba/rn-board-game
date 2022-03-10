@@ -23,17 +23,16 @@ import { player, cellState } from './constants';
 };
 
 const getNumberOfPiecesAbovePlayer1 = (boardState: Array<Array<number>>, cellPosition: cellPosition): number => {
-    console.log('Getting number of pieces above for player one.')
     let numberOfPieces = 0;
-    if (cellPosition.Y < (boardState.length - 1)) {
-        const stateOfCellAhead = boardState[cellPosition.Y + 1][cellPosition.X];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_1 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_1) {
-            const cellPositionAhead: cellPosition = {
+    if (cellPosition.Y > 0) {
+        const stateOfCellAbove = boardState[cellPosition.Y - 1][cellPosition.X];
+        if (stateOfCellAbove === cellState.CELL_CONTAINING_PIECE_PLAYER_1 || stateOfCellAbove === cellState.CELL_MATCHED_BEFORE_PLAYER_1) {
+            const cellPositionAbove: cellPosition = {
                 X: cellPosition.X,
-                Y: cellPosition.Y + 1,
+                Y: cellPosition.Y - 1,
             };
 
-            numberOfPieces += (1 + getNumberOfPiecesAbovePlayer1(boardState, cellPositionAhead));
+            numberOfPieces += (1 + getNumberOfPiecesAbovePlayer1(boardState, cellPositionAbove));
         } 
     }
 
@@ -42,15 +41,15 @@ const getNumberOfPiecesAbovePlayer1 = (boardState: Array<Array<number>>, cellPos
 
 const getNumberOfPiecesAbovePlayer2 = (boardState: Array<Array<number>>, cellPosition: cellPosition): number => {
     let numberOfPieces = 0;
-    if (cellPosition.Y < (boardState.length - 1)) {
-        const stateOfCellAhead = boardState[cellPosition.Y + 1][cellPosition.X];
-        if (stateOfCellAhead === cellState.CELL_CONTAINING_PIECE_PLAYER_2 || stateOfCellAhead === cellState.CELL_MATCHED_BEFORE_PLAYER_2) {
-            const cellPositionAhead: cellPosition = {
+    if (cellPosition.Y > 0) {
+        const stateOfCellAbove = boardState[cellPosition.Y - 1][cellPosition.X];
+        if (stateOfCellAbove === cellState.CELL_CONTAINING_PIECE_PLAYER_2 || stateOfCellAbove === cellState.CELL_MATCHED_BEFORE_PLAYER_2) {
+            const cellPositionAbove: cellPosition = {
                 X: cellPosition.X,
-                Y: cellPosition.Y + 1,
+                Y: cellPosition.Y - 1,
             };
 
-            numberOfPieces += (1 + getNumberOfPiecesAbovePlayer2(boardState, cellPositionAhead));
+            numberOfPieces += (1 + getNumberOfPiecesAbovePlayer2(boardState, cellPositionAbove));
         } 
     }
 

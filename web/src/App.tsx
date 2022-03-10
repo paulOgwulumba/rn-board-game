@@ -6,6 +6,7 @@ import {
     stringifyBoardState, 
     isValidCellToAddPieceTo, 
     isValidCellToMovePieceTo,
+    isValidPieceToAttack,
     isValidPieceToSelect,
     processMatch,
 } from './utils';
@@ -103,7 +104,6 @@ function App() {
                   // check if there is a match
                   const matchHandling = processMatch(gamePlayState);
                   if (matchHandling.isAMatch) {
-                        console.log(matchHandling);
                         matchHandling.cellPositionsWithAMatch.forEach((cellPositionWithAMatch) => {
                             unpackedBoardState[cellPositionWithAMatch.Y][cellPositionWithAMatch.X] = 
                                 playerTurn === player.FIRST_PLAYER? 
@@ -113,7 +113,7 @@ function App() {
                         });
 
                         // Signify that player can attack opponent's pieces.
-                        setNumberOfAttacksLeft(matchHandling.cellPositionsWithAMatch.length> 2? 2 : 1);
+                        setNumberOfAttacksLeft(matchHandling.cellPositionsWithAMatch.length> 3? 2 : 1);
                         setIsPlayerToAttackOpponentPieces(true);
                         setIsPlayerToplayAgain(false);
                   } 
@@ -130,6 +130,29 @@ function App() {
               else {
                   alert(cellMovingValidityStatus.message);
               }
+          }
+          else if (isPlayerToAttackOpponentPieces) {
+                const pieceAttackValidityStatus = isValidPieceToAttack(gamePlayState);
+                if (pieceAttackValidityStatus.isValid) {
+                    //Remove selected piece from board
+                    unpackedBoardState[position.Y][position.X] = cellState.CELL_EMPTY;
+                    setBoardState(stringifyBoardState(unpackedBoardState));
+                    setNumberOfAttacksLeft(numberOfAttacksLeft - 1);
+                    if (numberOfAttacksLeft < 2) {
+                        // toggle player's turn
+                        setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER); 
+                        setCurrentPlayer(currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
+                        
+                        // Reduce number of pieces in opponent's hand by 1
+                        currentPlayer === player.FIRST_PLAYER? setPlayerTwoPiecesLeft(playerTwoPiecesLeft - 1) : setPlayerOnePiecesLeft(playerOnePiecesLeft - 1);
+
+                        // signify that double play has ended
+                        setIsPlayerToAttackOpponentPieces(false);
+                    } 
+                }
+                else {
+                    alert(pieceAttackValidityStatus.message);
+                }
           }
           else {
               const pieceSelectionValidationStatus = isValidPieceToSelect(gamePlayState);
