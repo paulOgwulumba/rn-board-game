@@ -136,19 +136,41 @@ function App() {
                 if (pieceAttackValidityStatus.isValid) {
                     //Remove selected piece from board
                     unpackedBoardState[position.Y][position.X] = cellState.CELL_EMPTY;
-                    setBoardState(stringifyBoardState(unpackedBoardState));
+                    //setBoardState(stringifyBoardState(unpackedBoardState));
                     setNumberOfAttacksLeft(numberOfAttacksLeft - 1);
+                    let boardStateString = stringifyBoardState(unpackedBoardState);
+
                     if (numberOfAttacksLeft < 2) {
                         // toggle player's turn
                         setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER); 
                         setCurrentPlayer(currentPlayer === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);
                         
                         // Reduce number of pieces in opponent's hand by 1
-                        currentPlayer === player.FIRST_PLAYER? setPlayerTwoPiecesLeft(playerTwoPiecesLeft - 1) : setPlayerOnePiecesLeft(playerOnePiecesLeft - 1);
+                        currentPlayer === player.FIRST_PLAYER? 
+                                              setPlayerTwoPiecesLeft(playerTwoPiecesLeft - 1) 
+                                              : 
+                                              setPlayerOnePiecesLeft(playerOnePiecesLeft - 1);
 
                         // signify that double play has ended
                         setIsPlayerToAttackOpponentPieces(false);
+
+                        // change the state of the matched cells to matched_before
+                        console.log(boardStateString);
+                      
+                        boardStateString = boardStateString.replaceAll(
+                          currentPlayer === player.FIRST_PLAYER? 
+                            cellState.CELL_MATCHED_PLAYER_1.toString() 
+                            : 
+                            cellState.CELL_MATCHED_PLAYER_2.toString(),
+                          currentPlayer === player.FIRST_PLAYER? 
+                            cellState.CELL_MATCHED_BEFORE_PLAYER_1.toString() 
+                            : 
+                            cellState.CELL_MATCHED_BEFORE_PLAYER_2.toString() 
+                        );
+                        console.log(boardStateString);
                     } 
+
+                    setBoardState(boardStateString);
                 }
                 else {
                     alert(pieceAttackValidityStatus.message);
