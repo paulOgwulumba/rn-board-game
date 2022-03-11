@@ -9,6 +9,8 @@ import {
     isValidPieceToAttack,
     isValidPieceToSelect,
     processMatch,
+    processHorizontalMatch,
+    processVerticalMatch,
 } from './utils';
 import { cellPosition, gamePlayState } from './utils/interfaces';
 import { player, cellState } from './utils/constants';
@@ -98,6 +100,8 @@ function App() {
                       cellState.CELL_CONTAINING_PIECE_PLAYER_2;
                   
                   // remove piece from the previous cell
+                  const previousStateOfSelectedPiece = { X: cellOfSelectedPiece.X, Y: cellOfSelectedPiece.Y };
+                  const previousUnpackedBoardState = JSON.parse(JSON.stringify(unpackedBoardState));
                   unpackedBoardState[cellOfSelectedPiece.Y][cellOfSelectedPiece.X] = cellState.CELL_EMPTY;
                   
 
@@ -124,6 +128,69 @@ function App() {
                         // signify that double play has ended
                         setIsPlayerToplayAgain(false);
                   }  
+
+                    console.log(previousUnpackedBoardState[previousStateOfSelectedPiece.Y][previousStateOfSelectedPiece.X])
+                    // recalculate state of pieces matched before
+                    if (previousUnpackedBoardState[previousStateOfSelectedPiece.Y][previousStateOfSelectedPiece.X] === cellState.CELL_MATCHED_BEFORE_PLAYER_1
+                            || previousUnpackedBoardState[previousStateOfSelectedPiece.Y][previousStateOfSelectedPiece.X] === cellState.CELL_MATCHED_BEFORE_PLAYER_2
+                    ) {
+                        console.log('hit')
+                        const oldMatchHandlingVertical = processVerticalMatch({ 
+                            playerTurn, 
+                            boardState: previousUnpackedBoardState,
+                            currentPlayer,
+                            cellClicked: position,
+                            allPiecesAddedToBoard,
+                            cellOfSelectedPiece, 
+                        });
+
+                        if (oldMatchHandlingVertical.isAMatch) {
+                            oldMatchHandlingVertical.cellPositionsWithAMatch.filter(
+                                (cellPositionWithMatch) => { 
+                                    return !processHorizontalMatch({ 
+                                        cellClicked: cellPositionWithMatch,
+                                        playerTurn,
+                                        boardState: previousUnpackedBoardState,
+                                        currentPlayer,
+                                        allPiecesAddedToBoard,
+                                        cellOfSelectedPiece 
+                                    }).isAMatch} ).forEach((cellPositionWithAMatch) => {
+                                unpackedBoardState[cellPositionWithAMatch.Y][cellPositionWithAMatch.X] = 
+                                    playerTurn === player.FIRST_PLAYER? 
+                                        cellState.CELL_CONTAINING_PIECE_PLAYER_1
+                                        :
+                                        cellState.CELL_CONTAINING_PIECE_PLAYER_2
+                            });
+                        }
+
+                        const oldMatchHandlingHorizontal = processVerticalMatch({ 
+                    playerTurn, 
+                    boardState: previousUnpackedBoardState,
+                    currentPlayer,
+                    cellClicked: position,
+                    allPiecesAddedToBoard,
+                    cellOfSelectedPiece, 
+                    });
+
+                    if (oldMatchHandlingHorizontal.isAMatch) {
+                    oldMatchHandlingHorizontal.cellPositionsWithAMatch.filter(
+                        (cellPositionWithMatch) => { 
+                            return !processVerticalMatch({ 
+                                cellClicked: cellPositionWithMatch,
+                                playerTurn,
+                                boardState: previousUnpackedBoardState,
+                                currentPlayer,
+                                allPiecesAddedToBoard,
+                                cellOfSelectedPiece 
+                            }).isAMatch} ).forEach((cellPositionWithAMatch) => {
+                        unpackedBoardState[cellPositionWithAMatch.Y][cellPositionWithAMatch.X] = 
+                            playerTurn === player.FIRST_PLAYER? 
+                                cellState.CELL_CONTAINING_PIECE_PLAYER_1
+                                :
+                                cellState.CELL_CONTAINING_PIECE_PLAYER_2
+                    });
+                    }
+                  }
 
                   setBoardState(stringifyBoardState(unpackedBoardState));
               } 
@@ -167,7 +234,7 @@ function App() {
                             : 
                             cellState.CELL_MATCHED_BEFORE_PLAYER_2.toString() 
                         );
-                        console.log(boardStateString);
+                        
                     } 
 
                     setBoardState(boardStateString);
