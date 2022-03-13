@@ -8,17 +8,25 @@ import { stringifyBoardState } from '.';
    * @param position The position to add the piece to.
    * @param playerTurn The player whose turn it is to play.
    * @param setState Method that sets the react state representing the board arrangement.
-   * @returns 
+   * @returns Array representing the new board state.
    */
  const addPieceToSelectedCell = (
     unpackedBoardState: Array<Array<number>>, 
-    position: cellPosition, playerTurn: number, setState: Function) => {
+    position: cellPosition, 
+    playerTurn: number, 
+    setState?: Function
+  ) => {
     unpackedBoardState[position.Y][position.X] = 
     playerTurn === player.FIRST_PLAYER? 
         cellState.CELL_CONTAINING_PIECE_PLAYER_1
         : 
         cellState.CELL_CONTAINING_PIECE_PLAYER_2;
-    setState(stringifyBoardState(unpackedBoardState));
+
+    if (setState) {
+        setState(stringifyBoardState(unpackedBoardState));
+    }
+
+    return unpackedBoardState;
 }
 
 export { addPieceToSelectedCell };
