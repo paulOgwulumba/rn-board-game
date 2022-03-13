@@ -1,5 +1,7 @@
+export * from './addPieceToSelectedCell';
 export * from './cellContainsPlayerOnePiece';
 export * from './cellContainsPlayerTwoPiece';
+export * from './checkIfAllPiecesHaveBeenAddedToBoard';
 export * from './gamePlay';
 export * from './getNumberOfPiecesAbove';
 export * from './getNumberOfPiecesAhead';
@@ -11,4 +13,6 @@ export * from './isCellVerticallyAligned';
 export * from './isDiagonalCell'; 
 export * from './isMoreThanACellAwayFromSelectedPiece';
 export * from './processMatch';
+export * from './reduceNumberOfPiecesHeldByPlayerThatJustPlayed';
+export * from './togglePlayerTurn';
 export * from './unpackBoardState';

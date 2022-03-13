@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './App.css';
 import { Board } from './components';
 import { 
+    addPieceToSelectedCell,
+    checkIfAllPiecesHaveBeenAddedToBoard,
     unpackBoardState, 
     stringifyBoardState, 
     isValidCellToAddPieceTo, 
@@ -9,8 +11,8 @@ import {
     isValidPieceToAttack,
     isValidPieceToSelect,
     processMatch,
-    processHorizontalMatch,
-    processVerticalMatch,
+    reduceNumberOfPiecesHeldByPlayerThatJustPlayed,
+    togglePlayerTurn,
 } from './utils';
 import { cellPosition, gamePlayState } from './utils/interfaces';
 import { player, cellState } from './utils/constants';
@@ -32,6 +34,8 @@ function App() {
   const [numberOfAttacksLeft, setNumberOfAttacksLeft] = useState(0);
   const [cellOfSelectedPiece, setCellOfselectedPiece] = useState({ X:0, Y:0 });
   
+  
+  
   const handleClick = (position: cellPosition) => {
       const unpackedBoardState = unpackBoardState(boardState);
       const gamePlayState: gamePlayState = {
@@ -44,31 +48,16 @@ function App() {
       };
 
       if (!allPiecesAddedToBoard) {
-
           // check validity of player's move
           const cellAdditionValidityStatus = isValidCellToAddPieceTo(gamePlayState);
           if (cellAdditionValidityStatus.isValid) {
-              // add piece to the selected cell
-              unpackedBoardState[position.Y][position.X] = 
-                playerTurn === player.FIRST_PLAYER? 
-                  cellState.CELL_CONTAINING_PIECE_PLAYER_1
-                  : 
-                  cellState.CELL_CONTAINING_PIECE_PLAYER_2;
-              setBoardState(stringifyBoardState(unpackedBoardState));
-
-              // If player two just played the last piece in their hand, signify that all pieces have been added to the board.
-              if (playerTurn === player.SECOND_PLAYER && playerTwoPiecesInHand === 1) {
-                  setAllPiecesAddedToBoard(true);
-              }
-
-              // reduce number of pieces held by the player that just played
-              playerTurn === player.FIRST_PLAYER? 
-                setPlayerOnePiecesInHand(playerOnePiecesInHand - 1) 
-                :
-                setPlayerTwoPiecesInHand(playerTwoPiecesInHand - 1)
+              addPieceToSelectedCell(unpackedBoardState, position, playerTurn, setBoardState);
+            
+              checkIfAllPiecesHaveBeenAddedToBoard(playerTurn, playerTwoPiecesInHand, setAllPiecesAddedToBoard);
+            
+              reduceNumberOfPiecesHeldByPlayerThatJustPlayed(playerTurn, setPlayerOnePiecesInHand, setPlayerTwoPiecesInHand, playerOnePiecesInHand, playerTwoPiecesInHand);
               
-              // toggle player's turn
-              setPlayerTurn(playerTurn === player.FIRST_PLAYER? player.SECOND_PLAYER: player.FIRST_PLAYER);  
+              togglePlayerTurn(playerTurn, setPlayerTurn); 
           } else {
               alert(cellAdditionValidityStatus.message);
           }
